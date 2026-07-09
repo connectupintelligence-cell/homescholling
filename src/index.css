@@ -197,16 +197,12 @@ button, input, textarea, select {
 
 /* Dashboard Grid Layouts */
 .dashboard-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 1.85fr;
+  display: flex;
+  flex-direction: column;
   gap: 1.75rem;
-  align-items: start;
-}
-
-@media (max-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* Card Premium Design */
