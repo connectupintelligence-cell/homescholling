@@ -96,7 +96,7 @@ button, input, textarea, select {
 }
 
 .flex { display: flex; }
-.flex-column { flex-direction: column; }
+.flex-column, .flex-col { flex-direction: column; }
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
 .flex-wrap { flex-wrap: wrap; }
