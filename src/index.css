@@ -111,6 +111,24 @@ button, input, textarea, select {
 .mt-3 { margin-top: 0.75rem; }
 .mt-4 { margin-top: 1rem; }
 .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+
+/* Utilitários Adicionais de Layout e Espaçamento */
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.w-24 { width: 6rem; }
+.h-2 { height: 0.5rem; }
+.bg-dark { background: rgba(0, 0, 0, 0.35); }
+.rounded { border-radius: 8px; }
+.rounded-full { border-radius: 9999px; }
+.overflow-hidden { overflow: hidden; }
+.border { border: 1px solid var(--border-color); }
+.border-dashed { border-style: dashed; }
+.border-muted { border-color: var(--border-color); }
+.border-purple-muted { border-color: rgba(157, 78, 221, 0.25); }
+.max-h-60 { max-height: 15rem; }
+.overflow-y-auto { overflow-y: auto; }
 .text-center { text-align: center; }
 .text-xs { font-size: 0.75rem; }
 .text-sm { font-size: 0.875rem; }
