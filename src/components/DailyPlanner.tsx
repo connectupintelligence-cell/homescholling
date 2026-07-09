@@ -159,7 +159,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
   const extraActivityName = getExtraActivity(dayOfWeek);
 
   return (
-    <div className="daily-planner-component flex flex-col gap-6">
+    <div className="daily-planner-component flex flex-column gap-6">
       {/* Planner Header */}
       <div className="planner-header flex items-center justify-between border-b pb-4">
         <div>
@@ -218,7 +218,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
             </label>
           </div>
         </div>
-        <div className="card-body flex flex-col gap-4">
+        <div className="card-body flex flex-column gap-4">
           <div>
             <label className="form-label-sub">Texto do Dia (Professor):</label>
             {planning.mythologyText ? (
@@ -262,7 +262,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
             <h3>Letra Cursiva</h3>
           </div>
         </div>
-        <div className="card-body flex flex-col gap-4">
+        <div className="card-body flex flex-column gap-4">
           <div className="form-group">
             <label className="form-label-sub">Letra ou Texto do Dia:</label>
             <input
@@ -292,10 +292,10 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
             <h3>Exercícios da Época ({currentEpoch.type === 'letters' ? 'Letras' : 'Matemática'})</h3>
           </div>
         </div>
-        <div className="card-body flex flex-col gap-4">
+        <div className="card-body flex flex-column gap-4">
           <div className="epoch-didactic-info bg-dark-trans p-3 rounded text-xs border border-dashed border-muted">
             <span className="font-semibold text-light block mb-1">Mapeamento Pedagógico:</span>
-            <ul className="list-disc pl-4 flex flex-col gap-1 text-muted">
+            <ul className="list-disc pl-4 flex flex-column gap-1 text-muted">
               {currentEpoch.subjects.map((sub, idx) => (
                 <li key={idx}>{sub}</li>
               ))}
@@ -332,7 +332,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
             <h3>Desenho</h3>
           </div>
         </div>
-        <div className="card-body flex flex-col gap-4">
+        <div className="card-body flex flex-column gap-4">
           <div className="form-group">
             <label className="form-label-sub">Tema do Desenho (Decidido pelo Professor):</label>
             <input
@@ -363,7 +363,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
               <h3>Atividade Extra: {extraActivityName}</h3>
             </div>
           </div>
-          <div className="card-body flex flex-col gap-4">
+          <div className="card-body flex flex-column gap-4">
             <div className="form-group">
               <label className="form-label-sub">Conteúdo da Atividade ({extraActivityName}):</label>
               <textarea
@@ -395,7 +395,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
           </div>
           <span className="badge badge-purple">Rotina Semanal</span>
         </div>
-        <div className="card-body flex flex-col gap-4">
+        <div className="card-body flex flex-column gap-4">
           <div className="afternoon-suggested bg-dark-trans p-3 rounded border border-purple-muted">
             <span className="text-xs font-semibold text-light block mb-1">Atividade Sugerida:</span>
             <p className="text-sm text-purple-light font-medium">{getAfternoonActivity(dayOfWeek)}</p>
@@ -431,7 +431,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
             <h3>Atividades Diárias Essenciais</h3>
           </div>
         </div>
-        <div className="card-body flex flex-col gap-4">
+        <div className="card-body flex flex-column gap-4">
           <div className="flex flex-wrap gap-6">
             <label className="checkbox-label flex-1 min-w-[200px]">
               <input
@@ -445,7 +445,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
               </div>
             </label>
 
-            <div className="flex-1 min-w-[250px] flex flex-col gap-2">
+            <div className="flex-1 min-w-[250px] flex flex-column gap-2">
               <span className="font-semibold block text-sm">Leitura Diária do Livro</span>
               <div className="flex gap-2 items-center">
                 <input
