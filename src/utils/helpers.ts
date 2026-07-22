@@ -176,6 +176,15 @@ export const EPOCHS: Epoch[] = [
       'Montagem do presépio (reinos mineral, vegetal, animal e humano)',
       'Artes manuais festivas'
     ]
+  },
+  {
+    id: 'ferias-dez',
+    number: 0,
+    name: 'Férias de Fim de Ano',
+    type: 'vacation',
+    month: 11,
+    description: 'Férias finais e festividades de fim de ano.',
+    subjects: ['Descanso', 'Festas de Fim de Ano']
   }
 ];
 
@@ -225,6 +234,33 @@ export const DEFAULT_BOOKS: ReadingBook[] = [
 ];
 
 export function getEpochByMonth(month: number): Epoch {
+  return EPOCHS.find(e => e.month === month) || EPOCHS[0];
+}
+
+export function getEpochByDate(dateStr: string): Epoch {
+  const date = new Date(dateStr + 'T12:00:00');
+  const month = date.getMonth(); // 0-11
+  const day = date.getDate();     // 1-31
+
+  if (month === 6) { // July
+    // Férias de Julho ends on July 26. Classes resume on July 27.
+    if (day < 27) {
+      return EPOCHS.find(e => e.id === 'ferias-jul') || EPOCHS[0];
+    } else {
+      return EPOCHS.find(e => e.id === 'epoca-7') || EPOCHS[0];
+    }
+  }
+
+  if (month === 11) { // December
+    // Vivência do Advento ends on December 17. Final vacation starts on December 18.
+    if (day < 18) {
+      return EPOCHS.find(e => e.id === 'epoca-advento') || EPOCHS[0];
+    } else {
+      return EPOCHS.find(e => e.id === 'ferias-dez') || EPOCHS[0];
+    }
+  }
+
+  // Fallback
   return EPOCHS.find(e => e.month === month) || EPOCHS[0];
 }
 

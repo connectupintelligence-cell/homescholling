@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getEpochByMonth } from '../utils/helpers';
+import { getEpochByDate } from '../utils/helpers';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Info } from 'lucide-react';
 
 interface CalendarProps {
@@ -13,7 +13,7 @@ export const Calendar: React.FC<CalendarProps> = ({ selectedDateStr, onSelectDat
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth(); // 0 - 11
 
-  const activeEpoch = getEpochByMonth(currentMonth);
+  const activeEpoch = getEpochByDate(selectedDateStr);
 
   // Month names
   const monthNames = [
@@ -147,7 +147,9 @@ export const Calendar: React.FC<CalendarProps> = ({ selectedDateStr, onSelectDat
 
           const selected = isSelectedDay(dayNum);
           const weekend = isWeekend(dayNum);
-          const activeType = activeEpoch.type;
+          const cellDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+          const cellEpoch = getEpochByDate(cellDateStr);
+          const activeType = cellEpoch.type;
 
           let dayClasses = 'day-cell';
           if (selected) dayClasses += ' day-selected';

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { localDB } from '../db/localDB';
 import type { DailyPlanning } from '../types';
 import { 
-  getEpochByMonth, 
+  getEpochByDate, 
   getAfternoonActivity, 
   getExtraActivity, 
   getWeekNumberAndYear, 
@@ -33,8 +33,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
   const dayOfWeek = dateObj.getDay(); // 0 is Sunday, 6 is Saturday
   const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
-  const month = dateObj.getMonth();
-  const currentEpoch = getEpochByMonth(month);
+  const currentEpoch = getEpochByDate(dateStr);
 
   const [planning, setPlanning] = useState<DailyPlanning | null>(null);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'dirty'>('saved');
