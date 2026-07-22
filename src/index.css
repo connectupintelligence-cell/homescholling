@@ -917,36 +917,70 @@ button, input, textarea, select {
 /* Ajustes de responsividade para celular e computador */
 @media (max-width: 768px) {
   .app-container {
-    padding: 0.75rem;
+    padding: 0.75rem 0.75rem 6rem 0.75rem; /* Espaço para barra inferior + safe area */
     gap: 1rem;
   }
 
   .app-header {
     flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-    padding: 1.25rem 1rem;
-  }
-
-  .logo-section {
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
     text-align: center;
   }
-  
+
   .logo-section h1 {
     justify-content: center;
     font-size: 1.5rem;
   }
 
+  .app-header .nav-tabs {
+    display: none; /* Esconder abas normais do cabeçalho no mobile */
+  }
+
+  /* Barra de Navegação Inferior Fixa (Estilo App Nativo) */
   .nav-tabs {
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.25rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background: rgba(10, 11, 16, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-color);
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom)) 0.5rem;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
   }
 
   .nav-tab-btn {
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    padding: 0.5rem 0.2rem;
+    flex: 1;
+    border-radius: 10px;
+    color: var(--text-muted);
     justify-content: center;
-    padding: 0.5rem;
-    font-size: 0.85rem;
+    align-items: center;
+    background: transparent;
+  }
+
+  .nav-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .nav-tab-btn.active {
+    background: rgba(222, 171, 79, 0.15);
+    color: var(--color-gold);
+    box-shadow: none;
   }
 
   .dashboard-grid {
