@@ -57,11 +57,21 @@ export const DriveSync: React.FC<DriveSyncProps> = ({ onSyncComplete }) => {
         lastSync: new Date().toLocaleString()
       };
       
+      // Extrair ID da pasta se o usuário colou o link completo
+      const extractFolderId = (input: string): string => {
+        if (!input) return '';
+        const match = input.match(/\/folders\/([a-zA-Z0-9-_]+)/);
+        return match ? match[1] : input.trim();
+      };
+
       // Try to find or create the root folder
       setStatusMsg('Verificando pasta de destino...');
-      let folderId = await googleDriveService.findFolder('Homeschooling_Agenda', token);
+      let folderId = extractFolderId(config.folderId);
       if (!folderId) {
-        folderId = await googleDriveService.createFolder('Homeschooling_Agenda', token);
+        folderId = await googleDriveService.findFolder('Homeschooling_Agenda', token) || '';
+        if (!folderId) {
+          folderId = await googleDriveService.createFolder('Homeschooling_Agenda', token);
+        }
       }
       updated.folderId = folderId;
 
@@ -283,6 +293,20 @@ export const DriveSync: React.FC<DriveSyncProps> = ({ onSyncComplete }) => {
               />
               <p className="text-xxs text-muted mt-1">
                 Obtenha o Client ID criando uma credencial OAuth 2.0 no Google Cloud Console com o escopo do Google Drive.
+              </p>
+            </div>
+
+            <div className="form-group mb-3">
+              <label className="form-label text-xs">Link ou ID da Pasta do Google Drive (Opcional):</label>
+              <input
+                type="text"
+                className="form-input text-sm"
+                value={config.folderId}
+                onChange={(e) => handleConfigChange('folderId', e.target.value)}
+                placeholder="Ex: Cole o link completo da pasta ou o ID do Drive"
+              />
+              <p className="text-xxs text-muted mt-1">
+                Cole o link da pasta do Drive que você deseja usar. Deixe em branco para criar uma pasta padrão automática ("Homeschooling_Agenda").
               </p>
             </div>
 
