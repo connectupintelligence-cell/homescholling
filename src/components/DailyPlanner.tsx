@@ -16,6 +16,74 @@ import {
   Sparkles, CheckCircle, ChevronDown, ChevronUp, BookOpenCheck
 } from 'lucide-react';
 
+interface SuggestionItem {
+  title: string;
+  type: 'canção' | 'poema' | 'jogo' | 'trava-línguas';
+  content: string;
+  targetField: 'cursive' | 'exercise';
+}
+
+const getEpochSuggestions = (epochId: string): SuggestionItem[] => {
+  if (epochId === 'epoca-3') {
+    return [
+      {
+        title: "Trava-línguas da Época",
+        type: "trava-línguas",
+        content: "A Iara agarra e amarra a rara arara de Araraquara.",
+        targetField: "cursive"
+      },
+      {
+        title: "Canção do Plantador",
+        type: "canção",
+        content: "Semeie a semente\ndebaixo da terra.\nO sol ela sente,\na chuva ela espera.\n\nPara a terra ficar macia,\ntenha as mãos cheias de amor.\nDevagar já brota o broto,\ne floresce então a flor.\n\nA planta, na terra,\nseus pés logo espicha,\nseu corpo levanta,\nseus braços agita.\n\nE as árvores logo crescem\nsob o sol que tanto brilha.\nSão irmãs as mais diversas\ndentro da mesma família.\n\nA planta plantada\nvai ramificando,\nde folhas folhada,\nseu fruto mostrando.\n\nE o fruto amadurece\ne um dia cai no chão.\nE assim mesmo não se esquece\nde que tem outra missão.\n\nPois sua semente\npenetra na terra.\nO sol ela sente,\na chuva ela espera.\n\nE as árvores logo crescem\nsob o céu que tanto brilha.\nSão irmãs as mais diversas\ndentro da mesma família.",
+        targetField: "cursive"
+      },
+      {
+        title: "A Semente (Ruth Salles)",
+        type: "poema",
+        content: "Semente misteriosa,\nque da planta cai no chão,\nque segredos ela guarda\nno fundo do coração?\n\n“Eu sou o menor presente\nque foi posto em sua mão,\npois parece não ser nada\neste pequenino grão.\n\nMas dele verás crescer,\nnuma fecunda estação,\numa árvore frondosa\nsubindo para a amplidão!\n\nToda a árvore, guardada\ndentro do pequeno grão,\nesperava o bom momento\npara enfim se erguer do chão.\n\nVale mais que muita jóia\n– como percebes então –\no presente pequenino\nque foi posto em sua mão.”",
+        targetField: "cursive"
+      },
+      {
+        title: "Canção do Camponês",
+        type: "canção",
+        content: "Eu sou um camponês\nDas plantas vou cuidar\nVou com os meus amigos a terra trabalhar\n\nVamos plantar!\nVamos colher!\nE ao bom Deus agradecer!\n\n\"Delicada semente…\ndorme no berço da Terra…\ne o Sol ela sente…\ndepois chuva ela espera…\ne o broto desperta…\no mundo dá boas vindas…\ncom a forca da Vida…\nvai ao encontro com o céu...\"",
+        targetField: "cursive"
+      },
+      {
+        title: "Um Berço na Terra (Renato Machado)",
+        type: "canção",
+        content: "Um berço na terra\nEu vou preparar\nPara uma semente de vida brotar\nSemente na terra ela vai descansar\nDepois de um tempo, ela vem despertar\n\nCom a força do sol\nE a água da chuva\nRaiz pra baixo que firma na terra\nUm broto levanta apontando pro céu\nCom galhos e folhas de verde surgindo\nVem a primavera tudo colorindo\n\nTem rosa, violeta, lavanda, jasmim\nE tem girassol, vem girar para mim.",
+        targetField: "cursive"
+      }
+    ];
+  }
+
+  if (epochId === 'epoca-8') {
+    return [
+      {
+        title: "Poema: Casinha de Bichos (Hardy Guedes)",
+        type: "poema",
+        content: "Vejam só como os bichos\nVão ensinando a gente;\nPra ter casa bonita,\nbasta que se invente!\n\nCada um dá um jeitinho\nDe ter sua morada.\nCada um tem uma ideia\nMais ou menos bolada.\n\nRepare só como faz\nO esperto passarinho\nQue cata palha por palha\nPara fazer o seu ninho.\n\nA aranha não se acanha.\nCom seu novelo de linha,\nTrança onde quer sua teia,\nEscolhe quem quer por vizinha.\n\nO macaco, malandrinho,\nNão quer saber de trabalho.\nEscolhe uma boa árvore\nE logo se ajeita num galho.\n\nO grilo mora na folha\nE eu penso cá comigo:\nDeve ser o único bicho\nQue come o próprio abrigo.\n\nLevando massa no bico,\nTrabalhando o dia inteiro,\nJoão-de-barro faz casa\nComo se fosse pedreiro.\n\nO caracol teve sorte\nNão gastou tempo e dinheiro.\nNasceu com a casa nas costas\nE mora no mundo inteiro.\n\nO castor é engenheiro\nFaz barragem, faz represa.\nSua casa tem piscina\nNão é mesmo uma beleza?\n\nCasa é também proteção.\nO tatu, que não é boboca,\nSe vê inimigo por perto,\nJá vai correndo pra toca.\n\nPra fazer a sua casa,\nA formiga cava fundo.\nFaz túnel pra todo lado,\nPra que more todo mundo.\n\nA casa do marimbondo\nFica no alto, pendurada.\nSe alguém chegar bem perto,\nCuidado, lá vem ferroada!\n\nO sapo cava um buraco\nE uma cantoria entoa:\nVai chamando a namorada\nPra namorar na sua lagoa!",
+        targetField: "cursive"
+      }
+    ];
+  }
+
+  if (['epoca-2', 'epoca-4', 'epoca-7', 'epoca-9'].includes(epochId)) {
+    return [
+      {
+        title: "Jogo da Velha com Adição e Subtração",
+        type: "jogo",
+        content: "Regras do Jogo da Velha Matemático:\n1. Em dupla: Cada jogador recebe um tabuleiro e 9 peças (ex: 9 maçãs e 9 laranjas).\n2. Tira-se par ou ímpar para ver quem começa.\n3. O objetivo é fazer uma sequência na horizontal, vertical ou diagonal das operações para vencer.\n4. Cada jogador confere a conta do adversário para ver se está correta.\n5. Registre a pontuação das rodadas dos ganhadores.",
+        targetField: "exercise"
+      }
+    ];
+  }
+
+  return [];
+};
+
 interface DailyPlannerProps {
   dateStr: string;
   onSelectBookDrawer: () => void;
@@ -38,6 +106,15 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
   const [planning, setPlanning] = useState<DailyPlanning | null>(null);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'dirty'>('saved');
   const [showVerse, setShowVerse] = useState(true);
+  const [showResources, setShowResources] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
 
   // Load planning data
   useEffect(() => {
@@ -156,6 +233,7 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
   }
 
   const extraActivityName = getExtraActivity(dayOfWeek);
+  const epochSuggestions = getEpochSuggestions(currentEpoch.id);
 
   return (
     <div className="daily-planner-component flex flex-column gap-6">
@@ -180,6 +258,70 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
           )}
         </div>
       </div>
+
+      {/* SUGGESTIONS CARD */}
+      {epochSuggestions.length > 0 && (
+        <div className="card glass-card border-purple-muted animate-all">
+          <div className="card-header cursor-pointer flex justify-between items-center" onClick={() => setShowResources(!showResources)}>
+            <div className="card-title-icon">
+              <Sparkles className="icon-purple" size={20} />
+              <h3>Materiais de Apoio Sugeridos ({currentEpoch.name.split(':')[0]})</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="badge badge-purple">{epochSuggestions.length} {epochSuggestions.length === 1 ? 'sugestão' : 'sugestões'}</span>
+              <button type="button" className="btn-icon btn-icon-muted">
+                {showResources ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </button>
+            </div>
+          </div>
+          {showResources && (
+            <div className="card-body flex flex-column gap-4">
+              <p className="text-xs text-muted">
+                Encontramos os seguintes materiais no seu plano curricular da época. Você pode usá-los no planejamento de hoje:
+              </p>
+              <div className="flex flex-column gap-3">
+                {epochSuggestions.map((item, idx) => (
+                  <div key={idx} className="bg-dark-trans p-3 rounded border border-purple-muted flex flex-column gap-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-sm text-light">{item.title}</span>
+                      <span className="badge badge-gold text-xxs uppercase">{item.type}</span>
+                    </div>
+                    <blockquote className="font-serif italic text-xs text-muted whitespace-pre-line leading-relaxed bg-dark-trans p-2 rounded">
+                      {item.content}
+                    </blockquote>
+                    <div className="flex gap-2 justify-end mt-1">
+                      <button
+                        type="button"
+                        className="btn btn-secondary btn-sm text-xs"
+                        onClick={() => handleCopyToClipboard(item.content, `sug-${idx}`)}
+                      >
+                        {copiedId === `sug-${idx}` ? 'Copiado!' : 'Copiar Texto'}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm text-xs"
+                        onClick={() => {
+                          if (!planning) return;
+                          const updated = { ...planning };
+                          if (item.targetField === 'cursive') {
+                            updated.cursiveLetter = item.content;
+                          } else if (item.targetField === 'exercise') {
+                            updated.epochExercise = item.content;
+                          }
+                          setPlanning(updated);
+                          setSaveStatus('dirty');
+                        }}
+                      >
+                        {item.targetField === 'cursive' ? 'Usar na Cursiva' : 'Usar nos Exercícios'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 1. VERSO CARD */}
       <div className="card glass-card border-gold-left">
@@ -264,12 +406,12 @@ export const DailyPlanner: React.FC<DailyPlannerProps> = ({
         <div className="card-body flex flex-column gap-4">
           <div className="form-group">
             <label className="form-label-sub">Letra ou Texto do Dia:</label>
-            <input
-              type="text"
-              className="form-input"
+            <textarea
+              className="form-textarea"
+              rows={2}
               value={planning.cursiveLetter}
               onChange={(e) => handleFieldChange('cursiveLetter', e.target.value)}
-              placeholder="Ex: Letra M / Família de palavras..."
+              placeholder="Ex: Letra M / Escreva o poema ou trava-línguas do dia..."
             />
           </div>
           <div className="uploader-section">
