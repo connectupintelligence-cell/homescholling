@@ -4,7 +4,8 @@ import { googleDriveService } from '../services/googleDrive';
 import type { DriveConfig } from '../types';
 import { 
   Folder, File, FileText, FileImage, ExternalLink, 
-  ArrowLeft, RefreshCw, FolderOpen, ShieldAlert, Cloud
+  ArrowLeft, RefreshCw, FolderOpen, ShieldAlert, Cloud,
+  ChevronUp, ChevronDown, BookOpen
 } from 'lucide-react';
 
 interface DriveLibraryProps {
@@ -21,6 +22,7 @@ export const DriveLibrary: React.FC<DriveLibraryProps> = ({ onSwitchTab }) => {
   
   const [config, setConfig] = useState<DriveConfig | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [files, setFiles] = useState<any[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [breadcrumbs, setBreadcrumbs] = useState<FolderBreadcrumb[]>([
@@ -150,6 +152,60 @@ export const DriveLibrary: React.FC<DriveLibraryProps> = ({ onSwitchTab }) => {
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           Atualizar
         </button>
+      </div>
+
+      {/* CURRICULUM MAP COLLAPSIBLE */}
+      <div className="card glass-card border-purple-muted mb-2 animate-all">
+        <div className="card-header cursor-pointer flex justify-between items-center" onClick={() => setShowMap(!showMap)}>
+          <div className="card-title-icon">
+            <BookOpen className="icon-purple" size={20} />
+            <h3>Guia de Organização dos Materiais do Drive</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="badge badge-purple">Mapeamento de Épocas</span>
+            <button type="button" className="btn-icon btn-icon-muted">
+              {showMap ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
+          </div>
+        </div>
+        {showMap && (
+          <div className="card-body text-xs flex flex-column gap-3">
+            <p className="text-muted leading-relaxed">
+              Os arquivos desta pasta compartilhada estão divididos em 6 partes. Aqui está o guia de onde encontrar os materiais pedagógicos para cada Época do 3º ano:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1">
+              <div className="bg-dark-trans p-3 rounded border border-purple-muted flex flex-column gap-1">
+                <span className="font-semibold text-light flex items-center gap-1">🌾 Época de Agricultura / Horta:</span>
+                <span className="text-muted text-xxs">Materiais de semeadura, ritmos da horta e histórias da terra.</span>
+                <code className="text-purple-light mt-1 select-all">PARTE I/3º ANO/Agricultura- Do grão ao Pão/</code>
+                <code className="text-purple-light select-all">Parte II/.../3º ANO/Agricultura- Do grão ao Pão/</code>
+              </div>
+              <div className="bg-dark-trans p-3 rounded border border-purple-muted flex flex-column gap-1">
+                <span className="font-semibold text-light flex items-center gap-1">🏡 Época de Habitações / Abrigo:</span>
+                <span className="text-muted text-xxs">Poemas de moradas, a casa dos animais e processos de construção.</span>
+                <code className="text-purple-light mt-1 select-all">PARTE I/3º ANO/Habitações/</code>
+                <code className="text-purple-light select-all">Parte II/.../3º ANO/Habitações/</code>
+              </div>
+              <div className="bg-dark-trans p-3 rounded border border-purple-muted flex flex-column gap-1">
+                <span className="font-semibold text-light flex items-center gap-1">🧮 Épocas de Matemática / Aritmética:</span>
+                <span className="text-muted text-xxs">Cadernos de aritmética, Roy Wilkinson e jogos de fixação.</span>
+                <code className="text-purple-light mt-1 select-all">PARTE I/3º ANO/Matemática/</code>
+                <code className="text-purple-light select-all">PARTE I/JOGOS MATEMÁTICOS/</code>
+              </div>
+              <div className="bg-dark-trans p-3 rounded border border-purple-muted flex flex-column gap-1">
+                <span className="font-semibold text-light flex items-center gap-1">🛠️ Época de Profissões / Ofícios:</span>
+                <span className="text-muted text-xxs">Histórias dos trabalhadores, sapateiros e aprendizes.</span>
+                <code className="text-purple-light mt-1 select-all">PARTE I/3º ANO/Profissões/</code>
+              </div>
+              <div className="bg-dark-trans p-3 rounded border border-purple-muted flex flex-column gap-1 col-span-full">
+                <span className="font-semibold text-light flex items-center gap-1">📋 Planejamentos e Roteiros Gerais:</span>
+                <span className="text-muted text-xxs">Sugestões de planejamento anual, desenho de formas e ritmos.</span>
+                <code className="text-purple-light mt-1 select-all">PARTE I/3º ANO/Planejamentos e roteiros 3º ano/Sugestão de Planejamento 3o ano.docx</code>
+                <code className="text-purple-light select-all">3ª e 4ª - Épocas de Matemática - 3º ano.pdf (na raiz da pasta)</code>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Navigation Breadcrumbs */}
