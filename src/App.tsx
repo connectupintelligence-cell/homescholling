@@ -157,6 +157,7 @@ function App() {
         {activeTab === 'drive-library' && (
           <DriveLibrary 
             onSwitchTab={setActiveTab}
+            selectedDateStr={selectedDateStr}
           />
         )}
       </main>

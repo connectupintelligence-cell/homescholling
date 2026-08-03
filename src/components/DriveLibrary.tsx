@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import { localDB } from '../db/localDB';
 import { googleDriveService } from '../services/googleDrive';
 import type { DriveConfig } from '../types';
+import { getEpochByDate } from '../utils/helpers';
 import { 
   Folder, File, FileText, FileImage, ExternalLink, 
   ArrowLeft, RefreshCw, FolderOpen, ShieldAlert, Cloud,
-  ChevronUp, ChevronDown, BookOpen
+  ChevronUp, ChevronDown, BookOpen, Plus, Check, X
 } from 'lucide-react';
 
 interface DriveLibraryProps {
   onSwitchTab?: (tab: 'diary' | 'mythology' | 'library' | 'sync' | 'drive-library') => void;
+  selectedDateStr?: string;
 }
 
 interface FolderBreadcrumb {
@@ -17,12 +19,19 @@ interface FolderBreadcrumb {
   name: string;
 }
 
-export const DriveLibrary: React.FC<DriveLibraryProps> = ({ onSwitchTab }) => {
+export const DriveLibrary: React.FC<DriveLibraryProps> = ({ onSwitchTab, selectedDateStr }) => {
   const ROOT_FOLDER_ID = '130GwmgUF6AO6gEn4XxBsO1BBEWn4sv-g';
   
   const [config, setConfig] = useState<DriveConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  
+  // Modal states for adding file to planning
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<any | null>(null);
+  const [targetDate, setTargetDate] = useState(selectedDateStr || new Date().toISOString().split('T')[0]);
+  const [targetField, setTargetField] = useState<'cursiveLetter' | 'epochExercise' | 'drawingTheme' | 'bookReading'>('cursiveLetter');
+  const [addingStatus, setAddingStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [files, setFiles] = useState<any[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [breadcrumbs, setBreadcrumbs] = useState<FolderBreadcrumb[]>([
@@ -47,6 +56,65 @@ export const DriveLibrary: React.FC<DriveLibraryProps> = ({ onSwitchTab }) => {
       fetchFiles(currentFolderId);
     }
   }, [config, currentFolderId]);
+
+  const handleAddToPlanning = async () => {
+    if (!selectedFile) return;
+    try {
+      setAddingStatus('idle');
+      let plan = await localDB.getPlanning(targetDate);
+      
+      const fileRefLinkText = `[${selectedFile.name}](${selectedFile.webViewLink || ''})`;
+      
+      let valToInsert = '';
+      if (targetField === 'bookReading') {
+        valToInsert = selectedFile.name;
+      } else if (targetField === 'cursiveLetter') {
+        valToInsert = `Exercício cursivo baseado em: ${fileRefLinkText}`;
+      } else if (targetField === 'epochExercise') {
+        valToInsert = `Atividade baseada em: ${fileRefLinkText}`;
+      } else {
+        valToInsert = `Desenho inspirado em: ${fileRefLinkText}`;
+      }
+        
+      if (!plan) {
+        const currentEpoch = getEpochByDate(targetDate);
+        plan = {
+          date: targetDate,
+          activeEpochId: currentEpoch.id,
+          mythologyText: '',
+          mythologyReflection: '',
+          mythologyRead: false,
+          cursiveLetter: '',
+          epochExercise: '',
+          drawingTheme: '',
+          extraActivity: '',
+          afternoonActivity: '',
+          freePlay: true,
+          bookReading: '',
+          photos: {}
+        };
+      }
+
+      if (targetField === 'bookReading') {
+        plan.bookReading = valToInsert;
+      } else {
+        const currentVal = plan[targetField] || '';
+        plan[targetField] = currentVal ? `${currentVal}\n\n${valToInsert}` : valToInsert;
+      }
+
+      await localDB.savePlanning(plan);
+      
+      setAddingStatus('success');
+      setTimeout(() => {
+        setShowAddModal(false);
+        setSelectedFile(null);
+        setAddingStatus('idle');
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      setAddingStatus('error');
+    }
+  };
 
   const fetchFiles = async (folderId: string) => {
     if (!config?.accessToken) return;
@@ -293,23 +361,119 @@ export const DriveLibrary: React.FC<DriveLibraryProps> = ({ onSwitchTab }) => {
                         </div>
                       </div>
 
-                      {!isFolder && file.webViewLink && (
-                        <a
-                          href={file.webViewLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn btn-secondary btn-sm flex items-center gap-1.5 py-1 text-xs"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Visualizar
-                          <ExternalLink size={12} />
-                        </a>
+                      {!isFolder && (
+                        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm flex items-center gap-1 py-1 text-xs"
+                            onClick={() => {
+                              setSelectedFile(file);
+                              setShowAddModal(true);
+                            }}
+                          >
+                            <Plus size={12} />
+                            Adicionar ao Dia
+                          </button>
+                          {file.webViewLink && (
+                            <a
+                              href={file.webViewLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-secondary btn-sm flex items-center gap-1.5 py-1 text-xs"
+                            >
+                              Visualizar
+                              <ExternalLink size={12} />
+                            </a>
+                          )}
+                        </div>
                       )}
                     </div>
                   );
                 })}
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {/* ADD FILE TO PLANNING DIALOG MODAL */}
+      {showAddModal && selectedFile && (
+        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
+          <div className="modal-content card glass-card border-purple-muted animate-all" onClick={(e) => e.stopPropagation()}>
+            <div className="card-header flex justify-between items-center border-b pb-3">
+              <div className="card-title-icon">
+                <Plus className="icon-purple" size={18} />
+                <h4 className="text-sm font-semibold">Vincular Material ao Plano</h4>
+              </div>
+              <button
+                type="button"
+                className="btn-icon btn-icon-muted p-1"
+                onClick={() => setShowAddModal(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            <div className="card-body flex flex-column gap-4 p-4 text-xs">
+              <div className="bg-dark-trans p-3 rounded border border-purple-muted">
+                <span className="text-muted block mb-0.5">Material selecionado:</span>
+                <span className="font-semibold text-light text-sm">{selectedFile.name}</span>
+              </div>
+
+              {addingStatus === 'success' ? (
+                <div className="flex flex-column items-center justify-center py-6 text-center text-emerald-400 gap-2">
+                  <Check size={32} className="animate-bounce" />
+                  <span className="font-bold text-sm">Material vinculado com sucesso!</span>
+                </div>
+              ) : addingStatus === 'error' ? (
+                <div className="flex flex-column items-center justify-center py-6 text-center text-rose-400 gap-2">
+                  <ShieldAlert size={32} />
+                  <span className="font-bold text-sm">Erro ao salvar no planejamento.</span>
+                </div>
+              ) : (
+                <div className="flex flex-column gap-3">
+                  <div className="form-group">
+                    <label className="form-label text-muted block mb-1">Escolha a data do planejamento:</label>
+                    <input
+                      type="date"
+                      className="form-input text-xs p-2 w-full rounded"
+                      value={targetDate}
+                      onChange={(e) => setTargetDate(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label text-muted block mb-1">Qual atividade/campo do diário?</label>
+                    <select
+                      className="form-input text-xs p-2 w-full rounded"
+                      value={targetField}
+                      onChange={(e) => setTargetField(e.target.value as any)}
+                    >
+                      <option value="cursiveLetter">Letra Cursiva (Exercício)</option>
+                      <option value="epochExercise">Exercícios da Época</option>
+                      <option value="bookReading">Leituras do Rubicão (Livro do Dia)</option>
+                      <option value="drawingTheme">Tema do Desenho</option>
+                    </select>
+                  </div>
+
+                  <div className="flex justify-end gap-2 mt-2">
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => setShowAddModal(false)}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={handleAddToPlanning}
+                    >
+                      Confirmar Inserção
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
