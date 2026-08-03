@@ -101,6 +101,59 @@ export const DriveSync: React.FC<DriveSyncProps> = ({ onSyncComplete }) => {
     setStatusMsg('Desconectado do Google Drive.');
   };
 
+  const handleReauthenticate = async () => {
+    if (!config.clientId) {
+      alert('Por favor, insira o seu Client ID do Google Cloud Console nas configurações.');
+      setShowConfig(true);
+      return;
+    }
+    try {
+      setSyncing(true);
+      setSyncStatus('idle');
+      setStatusMsg('Renovando conexão com o Google Drive...');
+      const token = await googleDriveService.authenticate(config.clientId);
+      
+      const updated: DriveConfig = {
+        ...config,
+        accessToken: token,
+        isAuthenticated: true,
+        lastSync: new Date().toLocaleString()
+      };
+      
+      setConfig(updated);
+      await localDB.saveConfig('drive_config', updated);
+      
+      // Reiniciar sincronização com o novo token
+      setStatusMsg('Conexão renovada! Iniciando sincronização...');
+      const allPlannings = await localDB.getAllPlannings();
+      if (allPlannings.length === 0) {
+        setStatusMsg('Nenhum dado local encontrado para sincronizar.');
+        return;
+      }
+
+      let count = 0;
+      for (const plan of allPlannings) {
+        count++;
+        setStatusMsg(`Sincronizando dia ${count} de ${allPlannings.length}...`);
+        await googleDriveService.syncDayToDrive(plan, token, config.folderId);
+      }
+
+      updated.lastSync = new Date().toLocaleString();
+      setConfig(updated);
+      await localDB.saveConfig('drive_config', updated);
+      
+      setSyncStatus('success');
+      setStatusMsg(`Sincronização concluída! ${allPlannings.length} dias salvos no Google Drive.`);
+      if (onSyncComplete) onSyncComplete();
+    } catch (err: any) {
+      console.error(err);
+      setSyncStatus('error');
+      setStatusMsg(`Erro ao renovar conexão: ${err.message || 'Erro desconhecido'}`);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   // Full backup synchronisation (uploads all planning records to Drive)
   const handleFullSync = async () => {
     if (!config.isAuthenticated || !config.accessToken) {
@@ -264,13 +317,37 @@ export const DriveSync: React.FC<DriveSyncProps> = ({ onSyncComplete }) => {
           </div>
         </div>
 
-        {statusMsg && (
-          <div className={`status-alert ${syncStatus === 'success' ? 'success' : syncStatus === 'error' ? 'error' : 'info'}`}>
-            {syncStatus === 'success' && <CheckCircle2 size={16} />}
-            {syncStatus === 'error' && <ShieldAlert size={16} />}
-            <span className="status-text">{statusMsg}</span>
-          </div>
-        )}
+        {statusMsg && (() => {
+          const isAuthError = syncStatus === 'error' && statusMsg && (
+            statusMsg.toLowerCase().includes('credential') || 
+            statusMsg.toLowerCase().includes('token') || 
+            statusMsg.toLowerCase().includes('401') ||
+            statusMsg.toLowerCase().includes('unauthorized') ||
+            statusMsg.toLowerCase().includes('auth') ||
+            statusMsg.toLowerCase().includes('expire')
+          );
+
+          return (
+            <div className={`status-alert ${syncStatus === 'success' ? 'success' : syncStatus === 'error' ? 'error' : 'info'}`}>
+              {syncStatus === 'success' && <CheckCircle2 size={16} />}
+              {syncStatus === 'error' && <ShieldAlert size={16} />}
+              <div className="flex flex-column gap-2 w-full">
+                <span className="status-text">{statusMsg}</span>
+                {isAuthError && (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm mt-1"
+                    onClick={handleReauthenticate}
+                    disabled={syncing}
+                    style={{ alignSelf: 'flex-start' }}
+                  >
+                    {syncing ? 'Renovando...' : 'Reconectar ao Google Drive'}
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         {config.lastSync && (
           <p className="text-xs text-muted mt-2">
