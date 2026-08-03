@@ -73,7 +73,7 @@ export class GoogleDriveService {
       // @ts-ignore
       const client = google.accounts.oauth2.initTokenClient({
         client_id: clientId,
-        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata',
+        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.readonly',
         callback: (response: any) => {
           if (response.error) {
             reject(response);
@@ -86,6 +86,25 @@ export class GoogleDriveService {
     } catch (err) {
       reject(err);
     }
+  }
+
+  // List files in a Google Drive folder
+  async listFilesInFolder(folderId: string, accessToken: string): Promise<any[]> {
+    const query = `'${folderId}' in parents and trashed = false`;
+    const fields = 'files(id,name,mimeType,webViewLink,webContentLink,thumbnailLink,size,createdTime)';
+    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=${encodeURIComponent(fields)}&orderBy=name`;
+    
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'Error listing files');
+    }
+
+    const data = await res.json();
+    return data.files || [];
   }
 
   // Create folder inside Google Drive

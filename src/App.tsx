@@ -5,12 +5,13 @@ import DailyPlanner from './components/DailyPlanner';
 import MythologyManager from './components/MythologyManager';
 import ReadingLibrary from './components/ReadingLibrary';
 import DriveSync from './components/DriveSync';
-import { Sun, Calendar as CalendarIcon, BookOpen, BookMarked, Cloud } from 'lucide-react';
+import DriveLibrary from './components/DriveLibrary';
+import { Sun, Calendar as CalendarIcon, BookOpen, BookMarked, Cloud, FolderOpen } from 'lucide-react';
 
 function App() {
   const [dbReady, setDbReady] = useState(false);
   const [selectedDateStr, setSelectedDateStr] = useState('2026-07-06'); // Initial date based on current metadata
-  const [activeTab, setActiveTab] = useState<'diary' | 'mythology' | 'library' | 'sync'>('diary');
+  const [activeTab, setActiveTab] = useState<'diary' | 'mythology' | 'library' | 'sync' | 'drive-library'>('diary');
   const [selectedBookTitle, setSelectedBookTitle] = useState<string>('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -88,6 +89,14 @@ function App() {
           </button>
           <button
             type="button"
+            className={`nav-tab-btn ${activeTab === 'drive-library' ? 'active' : ''}`}
+            onClick={() => setActiveTab('drive-library')}
+          >
+            <FolderOpen size={16} />
+            Biblioteca do Drive
+          </button>
+          <button
+            type="button"
             className={`nav-tab-btn ${activeTab === 'sync' ? 'active' : ''}`}
             onClick={() => setActiveTab('sync')}
           >
@@ -142,6 +151,12 @@ function App() {
         {activeTab === 'sync' && (
           <DriveSync 
             onSyncComplete={triggerRefresh}
+          />
+        )}
+
+        {activeTab === 'drive-library' && (
+          <DriveLibrary 
+            onSwitchTab={setActiveTab}
           />
         )}
       </main>
