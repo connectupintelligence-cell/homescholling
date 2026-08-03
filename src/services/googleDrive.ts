@@ -92,7 +92,7 @@ export class GoogleDriveService {
   async listFilesInFolder(folderId: string, accessToken: string): Promise<any[]> {
     const query = `'${folderId}' in parents and trashed = false`;
     const fields = 'files(id,name,mimeType,webViewLink,webContentLink,thumbnailLink,size,createdTime)';
-    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=${encodeURIComponent(fields)}&orderBy=name`;
+    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=${encodeURIComponent(fields)}&orderBy=name&supportsAllDrives=true&includeItemsFromAllDrives=true`;
     
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -140,7 +140,7 @@ export class GoogleDriveService {
       query += ` and '${parentId}' in parents`;
     }
 
-    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id)`;
+    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id)&supportsAllDrives=true&includeItemsFromAllDrives=true`;
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
