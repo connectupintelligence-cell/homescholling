@@ -121,7 +121,11 @@ export const DriveLibrary: React.FC<DriveLibraryProps> = ({ onSwitchTab, selecte
       setLoading(true);
       setErrorMsg(null);
       const fileList = await googleDriveService.listFilesInFolder(folderId, config.accessToken);
-      setFiles(fileList);
+      const filteredList = fileList.filter(file => {
+        const isYearFolder = file.mimeType === 'application/vnd.google-apps.folder' && /^\d{4}$/.test(file.name);
+        return !isYearFolder;
+      });
+      setFiles(filteredList);
     } catch (err: any) {
       console.error(err);
       setErrorMsg(err.message || 'Erro ao carregar arquivos do Google Drive.');
